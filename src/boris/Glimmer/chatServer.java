@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Created by Boris on 2015/9/12.
  */
-public class chatServer {
+public final class chatServer {
     //通道管理器
     private Selector selector;
     private int sPort;
@@ -36,6 +36,7 @@ public class chatServer {
 
     /**
      * 轮训方式监听网络连接事件，由外部调用
+     * TODO:改为使用线程池
      * @throws IOException
      */
     public void listen() throws IOException {
@@ -54,7 +55,9 @@ public class chatServer {
                     new channelRegister(key, selector).run();
                 }
                 else if (key.isReadable()) {
-                    new channelReader(key).run();
+                    //new channelReader(key).run();
+                    Thread t = new Thread((Runnable)key.attachment());
+                    t.start();
                 }
             }
         }
