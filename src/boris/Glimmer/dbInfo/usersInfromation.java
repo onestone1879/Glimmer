@@ -14,7 +14,7 @@ public class usersInfromation extends CollectionInformation {
         this.dbName = "chatServer";
         this.collectionName = "users";
         this.indexesList = new HashMap<String, Document>();
-        this.indexesList.put("un",
+        this.indexesList.put("un@u",
                 new Document("username", 1)
         );
     }

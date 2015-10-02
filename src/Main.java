@@ -1,4 +1,7 @@
 import boris.Glimmer.chatServer;
+import boris.Glimmer.dbInfo.messagesInformation;
+import boris.Glimmer.dbInfo.usersInfromation;
+import boris.mo.DBuilder;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -16,7 +19,8 @@ public class Main {
     public static void main(String[] args) throws IOException{
         System.out.println("Hello World!");
 
-        chatServer();
+        //chatServer();
+        buildDB();
     }
 
 
@@ -31,5 +35,13 @@ public class Main {
 
         chatServer server = new chatServer(8963, clients);
         server.listen();
+    }
+
+    /**
+     * 测试构建数据库
+     */
+    public static void buildDB() {
+        DBuilder.build(new usersInfromation());
+        DBuilder.build(new messagesInformation());
     }
 }
