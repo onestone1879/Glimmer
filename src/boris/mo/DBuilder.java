@@ -17,12 +17,9 @@ import java.util.ArrayList;
  */
 public final class DBuilder {
 
-    public static void build(CollectionInformation ci) {
-        //获取chatServer数据库
-        MongoClient mc = new MongoClient();
+    public static void build(MongoClient mc,  CollectionInformation ci) {
+        //获取数据表引用
         MongoDatabase cs = mc.getDatabase(ci.dbName);
-
-        //检查users是否创建,未创建则创建
         FindIterable<Document> it = cs.getCollection(ci.collectionName).find();
         if ( null == it.first()) {
             //未创建数据库
@@ -36,7 +33,7 @@ public final class DBuilder {
         ListIndexesIterable<Document> lit = cs.getCollection(ci.collectionName).listIndexes();
         ArrayList<String> al = new ArrayList<String>();
         lit.forEach(
-                new BlockArrayList<Document>(al) {
+                new BlockArrayList<Document, String>(al) {
                     @Override
                     public void apply(Document document) {
                         al.add(document.getString("name"));
@@ -57,7 +54,7 @@ public final class DBuilder {
 
             //构建indexOptions，参数唯一，且随用随加
             IndexOptions io = new IndexOptions().name(name);
-            if (opt.indexOf("u") > -1) {    //  isUnique
+            if (opt.contains("u")) {    //  isUnique
                 io.unique(true);
             }
 
@@ -70,12 +67,11 @@ public final class DBuilder {
                 }
             }
             if (!hasUnIndex) {
-                System.out.printf("集合%s不包含%s索引，将创建该索引\n", ci.dbName, name);
+                System.out.printf("集合%s不包含%s索引，将创建该索引\n", ci.collectionName, name);
                 cs.getCollection(ci.collectionName).createIndex(
                         ci.indexesList.get(s), io
                 );
             }
         }
-        mc.close();
     }
 }
