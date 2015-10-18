@@ -146,14 +146,70 @@ public class usersInfromation extends CollectionInformation {
         }
     }
 
-
+    /**
+     * 密码校验
+     * @param mc MongoClient引用
+     * @param username 用户名
+     * @param pwd 用户密码
+     * @return 密码是否匹配
+     */
     public static boolean checkPwd(MongoClient mc, String username, String pwd) {
         user u = findUser(mc, username);
-        return (u.pwd == pwd);
+        if (null == u) {
+            System.out.println("userInformation:未找到" + username);
+            return false;
+        }
+        return (u.pwd.equals(pwd));
     }
 
-    //TODO:用户上下线处理，改变online状态
-    //TODO:查询在线状态
+    /**
+     * 更新数据
+     * @param mc MongoClient引用
+     * @param username 用户名
+     * @param d 新内容
+     * @return 检测用户失败则返回false
+     */
+    private static boolean updataByName(MongoClient mc, String username, Document d) {
+        if (!hasUser(mc, username)) {
+            return false;
+        }
+        mc.getDatabase(udbName)
+                .getCollection(ucollectionName)
+                .updateOne(
+                        new Document(keyUsname, username),
+                        new Document("$set", d)
+                );
+        return true;
+    }
+
+    /**
+     * 更新在线标识
+     * @param mc MongoClient引用
+     * @param username 用户名
+     * @param online 在线标识
+     * @return 检测用户失败则返回false
+     */
+    public static boolean updateOnline(MongoClient mc, String username, boolean online) {
+        return updataByName(mc, username,
+                new Document(keyOnline, online)
+        );
+    }
+
+    /**
+     * 更新在线标识
+     * @param mc MongoClient引用
+     * @param username 用户名
+     * @param online 在线标识
+     * @param ip LastIP
+     * @return 检测用户失败则返回false
+     */
+    public static boolean updateOnline(MongoClient mc, String username, boolean online, String ip) {
+        return updataByName(mc, username,
+                new Document(keyOnline, online)
+                .append(keyLastIP, ip)
+        );
+    }
+
+    //TODO:查询在线状态(###)暂时用不上
     //TODO:更改密码
-    //TODO:综合考虑各种需求，完善功能
 }

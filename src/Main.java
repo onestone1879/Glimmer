@@ -16,37 +16,35 @@ import static boris.Glimmer.dbInfo.messagesInformation.message;
 public class Main {
 
     /**
-     * TODO:如何处理客户端断开连接时触发的ex
+     * fixme:如何处理客户端断开连接时触发的ex
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws Exception{
         System.out.println("Hello World!");
 
-        //chatServer();
-        buildDB();
+        chatServer();
+//        buildDB();
     }
 
 
     /**
      * 服务器主函数
      */
-    public static void chatServer() throws IOException{
-        //TODO: 1. 添加身份验证
-        // TODO:2. 使用数据库
-        Map<SelectionKey, StringBuilder> clients =
-                Collections.synchronizedMap(new HashMap<SelectionKey, StringBuilder>());
+    public static void chatServer() throws Exception{
+        MongoClient mc = new MongoClient();
+        buildDB(mc);
 
-        chatServer server = new chatServer(8963, clients);
+        chatServer server = new chatServer(8963, mc);
         server.listen();
     }
 
     /**
      * 测试构建数据库
      */
-    public static void buildDB() {
+    public static void buildDB(MongoClient mc) {
         //TODO:针对MongoClient的连接配置，需要建立数据库信息配置类
-        MongoClient mc = new MongoClient();
+//        MongoClient mc = new MongoClient();
         DBuilder.build(mc, new usersInfromation());
         DBuilder.build(mc, new messagesInformation());
 
@@ -56,16 +54,16 @@ public class Main {
 //        } else {
 //            System.out.println(d.username + ":" + d.pwd + ":" + d.online);
 //        }
-
-        String f = "sonton";
-        String t = "boris";
-        usersInfromation.addUser(mc, f, "123");
-        usersInfromation.addUser(mc, t, "123");
-        messagesInformation.addMessage(mc, f, t, "hello!");
-        messagesInformation.addMessage(mc, t, f, "hello!!!");
-        ArrayList<message> al = messagesInformation.findSend(mc, f, t);
-        for (message m : al) {
-            System.out.printf("from:%s;to:%s;message:%s;Date:%s\n", m.from, m.to, m.message, m.addTime.toString());
-        }
+//
+//        String f = "sonton";
+//        String t = "boris";
+//        usersInfromation.addUser(mc, f, "123");
+//        usersInfromation.addUser(mc, t, "123");
+//        messagesInformation.addMessage(mc, f, t, "hello!");
+//        messagesInformation.addMessage(mc, t, f, "hello!!!");
+//        ArrayList<message> al = messagesInformation.findSend(mc, f, t);
+//        for (message m : al) {
+//            System.out.printf("from:%s;to:%s;message:%s;Date:%s\n", m.from, m.to, m.message, m.addTime.toString());
+//        }
     }
 }

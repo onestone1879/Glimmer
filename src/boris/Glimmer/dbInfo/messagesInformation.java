@@ -33,7 +33,6 @@ public class messagesInformation extends CollectionInformation {
     //每次查询返回的文档数量限制
     public static final int batchSize = 50;
 
-    //TODO:考虑索引的效率
     public messagesInformation() {
         this.dbName = mdbName;
         this.collectionName = mcollectionName;
